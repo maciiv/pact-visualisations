@@ -21,7 +21,6 @@ export function buildVisualisation(data: IPactData[]){
     
     svg.datum(chord)
         .append("g")
-        .style("transform", "translate(500px, 500px)")
         .selectAll("g")
         .data(d => d.groups)
         .join(
@@ -35,12 +34,14 @@ export function buildVisualisation(data: IPactData[]){
                                 .innerRadius(200)
                                 .outerRadius(210)))
                         .call(g => g.append("text")
+                            .attr("dy", -10)
                             .append("textPath")
-                            .attr("xlink:href", (d, i) => "#" + data[i].capability)
+                            .attr("href", (d, i) => "#" + data[i].capability)
                             .attr("startOffset", "25%")
                             .attr("dy", 10)
                             .style("text-anchor", "middle")
                             .style("font-size", "1.5rem")
+                            .style("text-transform", "capitalize")
                             .text((d, i) => data[i].capability)),
             update => update,
             exit => exit
@@ -48,7 +49,6 @@ export function buildVisualisation(data: IPactData[]){
     
     svg.datum(chord)
         .append("g")
-        .style("transform", "translate(500px, 500px)")
         .selectAll("path")
         .data(d => d)
         .join("path")

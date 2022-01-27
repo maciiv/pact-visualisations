@@ -10,7 +10,14 @@
         <script src="https://d3js.org/d3.v6.min.js"></script>        
     </head>
     <body>    
-        <svg preserveAspectRatio="xMinYMin meet" viewBox="0 0 1000 1000"></svg>   
+        <div class="row">
+            <div class="col-md-12">
+                <svg width="600" height="600" preserveAspectRatio="xMinYMin meet" viewBox="-300 -300 600 600"></svg>   
+            </div>
+            <div class="col-md-12">
+                <button class="btn btn-primary" onclick="download()">Download SVG</button>
+            </div>
+        </div>
         
         <!--Bootstrap-->
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -28,6 +35,25 @@
                     });
                     buildVisualisation(data)
             });
+
+            function download() {
+                var svg = document.getElementsByTagName("svg")[0];
+                saveSvg(svg, "pact-chord.svg");
+            }
+
+            function saveSvg(svgEl, name) {
+                svgEl.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+                var svgData = svgEl.outerHTML;
+                var preface = '<?xml version="1.0" standalone="no"?>\r\n';
+                var svgBlob = new Blob([preface, svgData], {type:"image/svg+xml;charset=utf-8"});
+                var svgUrl = URL.createObjectURL(svgBlob);
+                var downloadLink = document.createElement("a");
+                downloadLink.href = svgUrl;
+                downloadLink.download = name;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            }
         </script>
     </body>
 </html>
