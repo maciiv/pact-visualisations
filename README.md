@@ -8,3 +8,5 @@ Install D3
 
 Run the typescript library
 - npm run-script build
+
+To run in a local server, I recommend the Live Server extension for VsCode
