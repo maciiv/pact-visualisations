@@ -45,11 +45,13 @@ export function buildVisualisation(data: IPactData[]){
                             .style("font-size", "1.5rem")
                             .style("text-transform", "capitalize")
                             .text(d => data[d.index].capability)
-                            .on("click", (e, g) => {
+                            .on("click", function(e, g) {
                                 if (d3.select(this).attr("class").includes("clicked")) {
                                     d3.selectAll(".text").classed("clicked", false);
-                                    d3.selectAll(".relationship")
-                                        .style("opacity", 0.5);
+                                    d3.selectAll<SVGPathElement, d3.Chord>(".relationship")
+                                        .style("fill-opacity", 0.5)
+                                        .style("fill", d => getRelationshipColour(d, true))
+                                        .style("stroke", d => getRelationshipColour(d));
                                     d3.selectAll(".ring")
                                         .style("opacity", null);
                                     return
@@ -57,7 +59,9 @@ export function buildVisualisation(data: IPactData[]){
                                 d3.selectAll(".text").classed("clicked", false);
                                 d3.select(this).classed("clicked", true);
                                 d3.selectAll<SVGPathElement, d3.Chord>(".relationship")
-                                        .style("opacity", d => d.source.index == g.index ?  1 : 0.25);
+                                        .style("fill-opacity", d => d.source.index === g.index || d.target.index === g.index ?  0.5 : 0.25)
+                                        .style("fill", d => d.source.index === g.index || d.target.index === g.index ?  data[g.index].colour : "#f2f2f2")
+                                        .style("stroke", d => d.source.index === g.index || d.target.index === g.index ?  data[g.index].colour : "#e6e6e6");
                                     d3.selectAll<SVGPathElement, d3.ChordGroup>(".ring")
                                         .style("opacity", d => d.index == g.index ? null : 0.25);
                             })),
@@ -73,8 +77,13 @@ export function buildVisualisation(data: IPactData[]){
         .attr("class", "relationship")
         .attr("d", d3.ribbon<d3.Chord, d3.ChordGroup>()
             .radius(200))
-        .style("fill", d => data[d.source.index].colour)
+        .style("fill", d => getRelationshipColour(d, true))
         .style("fill-opacity", 0.5)
-        .style("stroke", d => data[d.source.index].colour)
+        .style("stroke", d => getRelationshipColour(d))
         .style("stroke-width", 1)
+
+    function getRelationshipColour(d: d3.Chord, isFill?: boolean): string {
+        const colour = isFill ? "#f2f2f2" : "#e6e6e6"
+        return d.source.index === d.target.index ? data[d.source.index].colour : colour;
+    }
 }

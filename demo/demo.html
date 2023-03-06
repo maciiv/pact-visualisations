@@ -25,7 +25,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="../lib/dist/index.js"></script>
         <script>
-            d3.csv("test-data.csv").then(function (c) {
+            d3.csv("andrew-data.csv").then(function (c) {
                     var data = c.map(function (r) {
                         return {
                             capability: r.capability,
@@ -38,7 +38,7 @@
 
             function download() {
                 var svg = document.getElementsByTagName("svg")[0];
-                saveSvg(svg, "pact-chord.svg");
+                saveSvg(svg, "chord-diagram.svg");
             }
 
             function saveSvg(svgEl, name) {
