@@ -83,7 +83,7 @@ export function buildVisualisation(data: IPactData[]){
         .style("stroke-width", 1)
 
     function getRelationshipColour(d: d3.Chord, isFill?: boolean): string {
-        const colour = isFill ? "#d9d9d9" : "#cccccc"
+        const colour = isFill ? "#cccccc" : "#a6a6a6"
         return d.source.index === d.target.index ? data[d.source.index].colour : colour;
     }
 }
