@@ -14,9 +14,16 @@
             <div class="col-md-12">
                 <svg width="600" height="600" preserveAspectRatio="xMinYMin meet" viewBox="-300 -300 600 600"></svg>   
             </div>
-            <div class="col-md-12">
-                <button class="btn btn-primary" onclick="download()">Download SVG</button>
-            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 d-flex">
+                        <button class="btn btn-primary mx-auto" onclick="saveSvg('chord-diagram.svg')">Download SVG</button>
+                    </div>
+                    <div class="col-md-6 d-flex">
+                        <button class="btn btn-primary mx-auto" onclick="savePng('chord-diagram')">Download PNG</button>
+                    </div>
+                </div>               
+            </div>          
         </div>
         
         <!--Bootstrap-->
@@ -36,19 +43,37 @@
                     buildVisualisation(data)
             });
 
-            function download() {
-                var svg = document.getElementsByTagName("svg")[0];
-                saveSvg(svg, "chord-diagram.svg");
+            function saveSvg(name) {
+                let svg = document.getElementsByTagName("svg")[0];
+                svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+                let svgData = svg.outerHTML;
+                let preface = '<?xml version="1.0" standalone="no"?>\r\n';
+                let svgBlob = new Blob([preface, svgData], {type:"image/svg+xml;charset=utf-8"});
+                let svgUrl = URL.createObjectURL(svgBlob);
+                triggerDownload(svgUrl, name)
             }
 
-            function saveSvg(svgEl, name) {
-                svgEl.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-                var svgData = svgEl.outerHTML;
-                var preface = '<?xml version="1.0" standalone="no"?>\r\n';
-                var svgBlob = new Blob([preface, svgData], {type:"image/svg+xml;charset=utf-8"});
-                var svgUrl = URL.createObjectURL(svgBlob);
-                var downloadLink = document.createElement("a");
-                downloadLink.href = svgUrl;
+            function savePng(name) {
+                let svg = document.getElementsByTagName("svg")[0];
+                svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+                let svgData = svg.outerHTML;
+                let svgBlobUrl = URL.createObjectURL(new Blob([svgData], {type:"image/svg+xml"}));
+                let svgImage = document.createElement("img");
+                svgImage.src = svgBlobUrl;
+                svgImage.onload = () => {
+                    let canvas = document.createElement("canvas");
+                    canvas.width = svgImage.width;
+                    canvas.height = svgImage.height;
+                    let canvasCtx = canvas.getContext("2d");
+                    canvasCtx.drawImage(svgImage, 0, 0);
+                    let imgData = canvas.toDataURL("image/png");
+                    triggerDownload(imgData, name);
+                }
+            }
+
+            function triggerDownload(uri, name) {
+                let downloadLink = document.createElement("a");
+                downloadLink.href = uri;
                 downloadLink.download = name;
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
